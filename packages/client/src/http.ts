@@ -18,13 +18,20 @@ interface MessageBody {
 }
 
 interface RequestParams {
-  host: string,
-  port: number,
-  path?: string,
-  method?: HTTPMethods,
-  headers?: MessageHeader,
+  host: string
+  port: number
+  path?: string
+  method?: HTTPMethods
+  headers?: MessageHeader
   body?: MessageBody
 }
+
+export interface Response {
+  statusCode: string
+  reason: string
+  headers: MessageHeader
+  body: string | null
+} 
 
 import net from 'net'
 import { Buffer } from 'node:buffer'
@@ -85,7 +92,7 @@ export class Request {
     return `${requestLine}\r\n${messageHeader}\r\n\r\n${messageBody}`
   }
 
-  send (connection?: net.Socket | undefined) {
+  send (connection?: net.Socket | undefined): Promise<Response> {
     return new Promise((resolve, reject) => {
       const parser = new ResponseParser()
       if (connection) {
@@ -149,7 +156,7 @@ class ResponseParser {
     return this.#bodyParser?.finished
   }
 
-  get response (): object {
+  get response () {
     this.#statusLine.match(/^HTTP\/1.1 ([0-9]{3}) ([\s\S]+)$/)
     return {
       statusCode: RegExp.$1,

@@ -1,4 +1,5 @@
-import { Request } from './http.ts'
+import { Request, Response } from './http.ts'
+import { htmlParser } from './html-parser.ts'
 
 const request = new Request({
   host: '127.0.0.1',
@@ -11,5 +12,6 @@ const request = new Request({
   }
 })
 
-const response = await request.send()
-console.log(response)
+const response: Response = await request.send()
+
+const domTree = htmlParser(response.body as string)
