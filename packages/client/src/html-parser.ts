@@ -2,35 +2,14 @@
  * html parser state
  * visit https://html.spec.whatwg.org/multipage/parsing.html#tokenization
 */
-
-interface Attribute {
-  name: string
-  value: string
-}
-
-interface Token {
-  type: string,
-  children?: Array<Element | TextToken>
-  content?: string
-}
-
-interface TagToken extends Token {
-  tagName?: string
-  name?: string
-  selfClosingFlag?: boolean
-  attributes?: Array<Attribute>
-}
-
-interface TextToken extends Token {
-}
-
-type EmitToken = TagToken & TextToken
-
-interface Element extends Token {
-  tagName: string
-  selfClosingFlag?: boolean
-  attributes: Array<Attribute>
-}
+import {
+  TagToken,
+  TextToken,
+  EmitToken,
+  Attribute,
+  Element
+} from './types.ts'
+import { collectCSSRules, computeCSS } from './css-computing.ts'
 
 const EOF = Symbol('EOF') // end of file
 let DOC_TYPE = ''
@@ -72,6 +51,11 @@ const emit = (token: EmitToken) => {
       children: []
     }
     top.children?.push(element)
+    // The parent element of any element is the top-of-stack element
+    // before it pushed the stack.
+    element.parent = top
+    // If the element is created, the browser will to computed CSS.
+    computeCSS(element)
     // If the self-closing flag for tag name is false,
     // pushed element into the stack.
     if (!token.selfClosingFlag) {
@@ -82,6 +66,14 @@ const emit = (token: EmitToken) => {
     if (token.tagName !== top.tagName) {
       throw new Error('The tag of start and end doesn\'t match.')
     } else {
+      // If meetting style tag, saved the css rules.
+      // If style element is a child of the body element,
+      // it will be reflowed.
+      if (token.tagName === 'style') {
+        if (top?.children?.length && top.children[0].type === 'text') {
+          collectCSSRules(top.children[0].content as string)
+        }
+      }
       // If matcheed, poped from the stack.
       // self-closing flagof element is true,
       // immediately poped from the stack.

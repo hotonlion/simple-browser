@@ -1,4 +1,5 @@
-import { Request, Response } from './http.ts'
+import { Response } from './types.ts'
+import { Request } from './http.ts'
 import { htmlParser } from './html-parser.ts'
 
 const request = new Request({
