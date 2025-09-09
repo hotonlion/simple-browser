@@ -1,38 +1,10 @@
-enum HTTPMethods {
-  OPTIONS = 'OPTIONS',
-  GET ='GET',
-  HEAD = 'HEAD',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-  TRACE = 'TRACE',
-  CONNECT = 'CONNECT'
-}
-
-interface MessageHeader {
-  [x: string]: string | number
-}
-
-interface MessageBody {
-  [x: string]: any
-}
-
-interface RequestParams {
-  host: string
-  port: number
-  path?: string
-  method?: HTTPMethods
-  headers?: MessageHeader
-  body?: MessageBody
-}
-
-export interface Response {
-  statusCode: string
-  reason: string
-  headers: MessageHeader
-  body: string | null
-} 
-
+import {
+  HTTPMethods,
+  MessageHeader, 
+  MessageBody,
+  RequestParams,
+  Response
+} from './types.ts'
 import net from 'net'
 import { Buffer } from 'node:buffer'
 import { calculateStringLength } from './utils.ts'

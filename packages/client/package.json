@@ -10,5 +10,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "css": "^3.0.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/css": "^0.0.38",
+    "@types/lodash": "^4.17.20"
+  }
 }
